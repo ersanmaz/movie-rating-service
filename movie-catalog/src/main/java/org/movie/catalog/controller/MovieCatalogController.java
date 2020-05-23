@@ -1,5 +1,6 @@
 package org.movie.catalog.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.RequiredArgsConstructor;
 import org.movie.catalog.entity.CatalogItem;
 import org.movie.catalog.entity.Movie;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ public class MovieCatalogController {
     private final RestTemplate restTemplate;
 
     @GetMapping("/{userId}")
+    @HystrixCommand(fallbackMethod = "getFallbackCatalog")
     public List<CatalogItem> getCatalogByUserId(@PathVariable String userId) {
 
         UserRating userRating = restTemplate.getForObject(RATING_URL + userId, UserRating.class);
@@ -33,5 +36,9 @@ public class MovieCatalogController {
                     return new CatalogItem(movie.getName(), movie.getDescription(), rating.getRating());
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<CatalogItem> getFallbackCatalog(String userId) {
+        return Collections.singletonList(new CatalogItem("No movie", "", 0));
     }
 }

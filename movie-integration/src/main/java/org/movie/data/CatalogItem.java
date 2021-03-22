@@ -1,11 +1,13 @@
-package org.rating.data.entity;
+package org.movie.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Rating {
-    private final String movieId;
+public class CatalogItem {
+
+    private final String name;
+    private final String desc;
     private final int rating;
 }

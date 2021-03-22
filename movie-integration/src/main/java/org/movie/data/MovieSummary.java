@@ -1,4 +1,4 @@
-package org.movie.info.entity;
+package org.movie.data;
 
 import lombok.Data;
 
